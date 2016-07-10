@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.scijava.type.GenericTyped;
 import org.scijava.type.Types;
 
 /**
@@ -188,12 +189,14 @@ public class OpRef {
 		for (Object arg : args) {
 			if (first) first = false;
 			else sb.append(", ");
-			if (arg.getClass() == Class.class) {
-				// special typed null placeholder
-				sb.append(((Class<?>) arg).getSimpleName());
+			// NB: OpRef is context-free, so we do not have access to the
+			// SciJava TypeService to be _really_ smart about the generic type.
+			// But this heuristic is probably good enough for simple printing.
+			if (arg instanceof GenericTyped) {
+				// arg knows its generic type
+				sb.append(((GenericTyped) arg).getType());
 			}
 			else sb.append(arg.getClass().getSimpleName());
-
 		}
 		sb.append(")");
 

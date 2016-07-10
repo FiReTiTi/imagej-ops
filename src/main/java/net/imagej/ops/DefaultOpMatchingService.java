@@ -585,7 +585,7 @@ public class DefaultOpMatchingService extends AbstractService implements
 		}
 
 		final Type type = item.getGenericType();
-		if (!canConvert(arg, type)) {
+		if (!convertService.supports(arg, type)) {
 			candidate.setStatus(StatusCode.CANNOT_CONVERT, arg.getClass().getName() +
 				" => " + type, item);
 			return false;
@@ -594,40 +594,16 @@ public class DefaultOpMatchingService extends AbstractService implements
 		return true;
 	}
 
-	/** Helper method of {@link #canAssign}. */
-	private boolean canConvert(final Object arg, final Type type) {
-		if (isMatchingClass(arg, type)) {
-			// NB: Class argument for matching, to help differentiate op signatures.
-			return true;
-		}
-		return convertService.supports(arg, type);
-	}
-
 	/** Helper method of {@link #assignInputs}. */
 	private void assign(final Module module, final Object arg,
 		final ModuleItem<?> item)
 	{
 		if (arg != null) {
 			final Type type = item.getGenericType();
-			final Object value = convert(arg, type);
+			final Object value = convertService.convert(arg, type);
 			module.setInput(item.getName(), value);
 		}
 		module.setResolved(item.getName(), true);
-	}
-
-	/** Helper method of {@link #assign}. */
-	private Object convert(final Object arg, final Type type) {
-		if (isMatchingClass(arg, type)) {
-			// NB: Class argument for matching; fill with null.
-			return null;
-		}
-		return convertService.convert(arg, type);
-	}
-
-	/** Determines whether the argument is a matching class instance. */
-	private boolean isMatchingClass(final Object arg, final Type type) {
-		return arg instanceof Class && convertService.supports((Class<?>) arg,
-			type);
 	}
 
 }
