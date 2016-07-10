@@ -57,6 +57,7 @@ import org.junit.Before;
 import org.scijava.Context;
 import org.scijava.cache.CacheService;
 import org.scijava.plugin.Parameter;
+import org.scijava.type.TypeService;
 
 /**
  * Base class for {@link Op} unit testing.
@@ -79,10 +80,13 @@ public abstract class AbstractOpTest {
 	@Parameter
 	protected OpMatchingService matcher;
 
+	@Parameter
+	protected TypeService types;
+
 	/** Subclasses can override to create a context with different services. */
 	protected Context createContext() {
 		return new Context(OpService.class, OpMatchingService.class,
-			CacheService.class);
+			TypeService.class, CacheService.class);
 	}
 
 	/** Sets up a SciJava context with {@link OpService}. */
