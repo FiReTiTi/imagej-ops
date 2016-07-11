@@ -48,7 +48,7 @@ public class ErosionTest extends AbstractOpTest {
 		final Shape shape = new DiamondShape(1);
 		@SuppressWarnings("unchecked")
 		final Img<ByteType> out1 = (Img<ByteType>) ops.run(DefaultErode.class,
-			Img.class, in, shape, false);
+			null, in, shape, false);
 		final Img<ByteType> out2 = Erosion.erode(in, shape, 1);
 		assertIterationsEqual(out1, out2);
 	}
@@ -58,7 +58,7 @@ public class ErosionTest extends AbstractOpTest {
 		final Shape shape = new DiamondShape(1);
 		@SuppressWarnings("unchecked")
 		final Img<BitType> out1 = (Img<BitType>) ops.run(DefaultErode.class,
-			Img.class, bitIn, shape, false);
+			null, bitIn, shape, false);
 		final Img<BitType> out2 = Erosion.erode(bitIn, shape, 1);
 		final Cursor<BitType> c1 = out1.cursor();
 		final Cursor<BitType> c2 = out2.cursor();
@@ -71,7 +71,7 @@ public class ErosionTest extends AbstractOpTest {
 		final Shape shape = new DiamondShape(1);
 		@SuppressWarnings("unchecked")
 		final Img<ByteType> out1 = (Img<ByteType>) ops.run(DefaultErode.class,
-			Img.class, in, shape, true);
+			null, in, shape, true);
 		final Img<ByteType> out2 = Erosion.erodeFull(in, shape, 1);
 		assertIterationsEqual(out1, out2);
 	}
@@ -88,7 +88,7 @@ public class ErosionTest extends AbstractOpTest {
 			shapes, 1);
 		@SuppressWarnings("unchecked")
 		final IterableInterval<ByteType> out1 = (IterableInterval<ByteType>) ops
-			.run(ListErode.class, IterableInterval.class, in, shapes, false);
+			.run(ListErode.class, null, in, shapes, false);
 		assertIterationsEqual(out1, out2);
 	}
 
@@ -102,7 +102,7 @@ public class ErosionTest extends AbstractOpTest {
 		final Img<ByteType> out2 = Erosion.erodeFull(in, shapes, 1);
 		@SuppressWarnings("unchecked")
 		final IterableInterval<ByteType> out1 = (IterableInterval<ByteType>) ops
-			.run(ListErode.class, IterableInterval.class, in, shapes, true);
+			.run(ListErode.class, null, in, shapes, true);
 		assertIterationsEqual(out1, out2);
 	}
 }
