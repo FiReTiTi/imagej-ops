@@ -77,6 +77,7 @@ import net.imglib2.type.Type;
 import org.scijava.Contextual;
 import org.scijava.module.Module;
 import org.scijava.module.ModuleItem;
+import org.scijava.type.TypeService;
 
 /**
  * An op environment is the top-level entry point into op execution. It provides
@@ -112,6 +113,8 @@ public interface OpEnvironment extends Contextual {
 	// -- OpEnvironment methods --
 
 	OpMatchingService matcher();
+
+	TypeService types();
 
 	/**
 	 * Executes the given operation with the specified arguments. The best

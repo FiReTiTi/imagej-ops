@@ -37,6 +37,7 @@ import java.util.HashMap;
 
 import org.scijava.AbstractContextual;
 import org.scijava.Context;
+import org.scijava.type.TypeService;
 
 /**
  * A customized op execution environment.
@@ -95,6 +96,11 @@ public class CustomOpEnvironment extends AbstractContextual implements
 	@Override
 	public OpMatchingService matcher() {
 		return parent().matcher();
+	}
+
+	@Override
+	public TypeService types() {
+		return parent().types();
 	}
 
 	@Override

@@ -39,6 +39,7 @@ import org.scijava.plugin.AbstractPTService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.Service;
+import org.scijava.type.TypeService;
 
 /**
  * Default service for managing and executing {@link Op}s.
@@ -57,6 +58,9 @@ public class DefaultOpService extends AbstractPTService<Op> implements
 	private OpMatchingService matcher;
 
 	@Parameter
+	private TypeService types;
+
+	@Parameter
 	private NamespaceService namespaceService;
 
 	// -- OpEnvironment methods --
@@ -64,6 +68,11 @@ public class DefaultOpService extends AbstractPTService<Op> implements
 	@Override
 	public OpMatchingService matcher() {
 		return matcher;
+	}
+
+	@Override
+	public TypeService types() {
+		return types;
 	}
 
 	@Override
