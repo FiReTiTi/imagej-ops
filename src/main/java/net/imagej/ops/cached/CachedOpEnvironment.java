@@ -30,6 +30,7 @@
 
 package net.imagej.ops.cached;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -89,7 +90,7 @@ public class CachedOpEnvironment extends CustomOpEnvironment {
 		final Op op = super.op(ref);
 
 		for (final Class<?> ignored : ignoredOps) {
-			for (final Class<?> t : ref.getTypes()) {
+			for (final Type t : ref.getTypes()) {
 				if (Types.isAssignable(t, ignored)) {
 					return op;
 				}

@@ -450,12 +450,12 @@ public class DefaultOpMatchingService extends AbstractService implements
 	 * </p>
 	 */
 	private boolean outputsMatch(final OpCandidate candidate) {
-		final Collection<Class<?>> outTypes = candidate.getRef().getOutTypes();
+		final Collection<Type> outTypes = candidate.getRef().getOutTypes();
 		if (outTypes == null) return true; // no constraints on output types
 
 		final Iterator<ModuleItem<?>> outItems = candidate.cInfo().outputs()
 			.iterator();
-		for (final Class<?> outType : outTypes) {
+		for (final Type outType : outTypes) {
 			if (!outItems.hasNext()) {
 				candidate.setStatus(StatusCode.TOO_FEW_OUTPUTS);
 				return false;
