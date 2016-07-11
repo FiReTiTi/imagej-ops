@@ -156,6 +156,7 @@ public interface OpEnvironment extends Contextual {
 	 */
 	@OpMethod(op = net.imagej.ops.run.RunByType.class)
 	default Object run(final Class<? extends Op> type, final Object... args) {
+		for (Object arg : args) if (arg instanceof Class) throw new RuntimeException("CLASS PLACEHOLDER");
 		return run(module(type, args));
 	}
 
