@@ -41,6 +41,7 @@ import org.scijava.module.Module;
 import org.scijava.module.ModuleInfo;
 import org.scijava.module.ModuleItem;
 import org.scijava.plugin.SciJavaPlugin;
+import org.scijava.type.Types;
 
 /**
  * Utility methods for working with ops. In particular, this class contains
@@ -116,7 +117,7 @@ public final class OpUtils {
 			for (final Class<?> t : types) {
 				if (!t.isInstance(delegate)) {
 					throw new IllegalStateException(delegate.getClass().getName() +
-						" is not of type " + t.getName());
+						" is not of type " + Types.name(t));
 				}
 			}
 		}

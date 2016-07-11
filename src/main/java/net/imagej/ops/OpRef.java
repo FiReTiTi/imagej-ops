@@ -36,6 +36,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.scijava.type.Types;
+
 /**
  * Data structure which identifies an op by name and/or type(s) and/or argument
  * type(s), along with a list of input arguments.
@@ -156,7 +158,7 @@ public class OpRef {
 		append(sb, name);
 		if (types != null) {
 			for (final Class<?> t : types) {
-				append(sb, t.getName());
+				append(sb, Types.name(t));
 			}
 		}
 		return sb.toString();
@@ -166,7 +168,7 @@ public class OpRef {
 	public boolean typesMatch(final Class<?> c) {
 		if (types == null) return true;
 		for (final Class<?> t : types) {
-			if (!t.isAssignableFrom(c)) return false;
+			if (!Types.isAssignable(c, t)) return false;
 		}
 		return true;
 	}

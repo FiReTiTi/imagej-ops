@@ -48,6 +48,7 @@ import org.scijava.command.CommandInfo;
 import org.scijava.module.Module;
 import org.scijava.module.ModuleItem;
 import org.scijava.plugin.Parameter;
+import org.scijava.type.Types;
 
 /**
  * Creates {@link CachedFunctionOp}s which know how to cache their outputs.
@@ -89,7 +90,7 @@ public class CachedOpEnvironment extends CustomOpEnvironment {
 
 		for (final Class<?> ignored : ignoredOps) {
 			for (final Class<?> t : ref.getTypes()) {
-				if (ignored.isAssignableFrom(t)) {
+				if (Types.isAssignable(t, ignored)) {
 					return op;
 				}
 			}
