@@ -32,6 +32,7 @@
 package org.scijava.type;
 
 import com.google.common.reflect.TypeToken;
+import com.googlecode.gentyref.GenericTypeReflector;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -64,6 +65,8 @@ public final class Types {
 	 * @see Class#isAssignableFrom(Class)
 	 */
 	public static boolean isAssignable(final Type source, final Type target) {
+		// FIXME: This logic is fragmented and hacky right now. Clean up and fix.
+		if (GenericTypeReflector.isSuperType(target, source)) return true;
 		return TypeToken.of(target).isAssignableFrom(source);
 	}
 

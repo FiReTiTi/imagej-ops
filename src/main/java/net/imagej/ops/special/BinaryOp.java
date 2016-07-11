@@ -30,6 +30,10 @@
 
 package net.imagej.ops.special;
 
+import java.lang.reflect.Type;
+
+import net.imagej.ops.Op;
+import net.imagej.ops.OpEnvironment;
 import net.imagej.ops.special.computer.BinaryComputerOp;
 import net.imagej.ops.special.function.BinaryFunctionOp;
 import net.imagej.ops.special.hybrid.BinaryHybridCF;
@@ -38,6 +42,8 @@ import net.imagej.ops.special.hybrid.BinaryHybridCFI1;
 import net.imagej.ops.special.hybrid.BinaryHybridCI;
 import net.imagej.ops.special.hybrid.BinaryHybridCI1;
 import net.imagej.ops.special.inplace.BinaryInplaceOp;
+
+import org.scijava.type.Nil;
 
 /**
  * A <em>binary</em> operation computes a result from two given inputs. The
@@ -101,6 +107,90 @@ public interface BinaryOp<I1, I2, O> extends UnaryOp<I1, O>,
 		// Individual implementations can override this assumption if they
 		// have state (such as buffers) that cannot be shared across threads.
 		return this;
+	}
+
+	// -- Utility methods --
+
+	/**
+	 * Gets the best {@link BinaryOp} implementation for the given types
+	 * and arguments, populating its inputs.
+	 *
+	 * @param ops The {@link OpEnvironment} to search for a matching op.
+	 * @param opType The {@link Class} of the operation. If multiple
+	 *          {@link BinaryOp}s share this type (e.g., the type is an
+	 *          interface which multiple {@link BinaryOp}s implement),
+	 *          then the best {@link BinaryOp} implementation to use will
+	 *          be selected automatically from the type and arguments.
+	 * @param otherArgs The operation's arguments, excluding the typed inputs and
+	 *          output values.
+	 * @return A {@link BinaryOp} with populated inputs, ready to use.
+	 */
+	public static <I1, I2, O, OP extends BinaryOp<I1, I2, O>> OP op(
+		final OpEnvironment ops, final Class<? extends Op> opType,
+		final Nil<OP> specialType, final Object... otherArgs)
+	{
+		return opOI(ops, opType, specialType, null, null, null, otherArgs);
+	}
+
+	/**
+	 * Gets the best {@link BinaryOp} implementation for the given types
+	 * and arguments, populating its inputs.
+	 *
+	 * @param ops The {@link OpEnvironment} to search for a matching op.
+	 * @param opType The {@link Class} of the operation. If multiple
+	 *          {@link BinaryOp}s share this type (e.g., the type is an
+	 *          interface which multiple {@link BinaryOp}s implement),
+	 *          then the best {@link BinaryOp} implementation to use will
+	 *          be selected automatically from the type and arguments.
+	 * @param in1 The first typed input.
+	 * @param in2 The second typed input.
+	 * @param otherArgs The operation's arguments, excluding the typed inputs and
+	 *          output values.
+	 * @return A {@link BinaryOp} with populated inputs, ready to use.
+	 */
+	public static <I1, I2, O, OP extends BinaryOp<I1, I2, O>> OP opI(
+		final OpEnvironment ops, final Class<? extends Op> opType,
+		final Nil<OP> specialType, final I1 in1, final I2 in2,
+		final Object... otherArgs)
+	{
+		return opOI(ops, opType, specialType, null, in1, in2, otherArgs);
+	}
+
+	/**
+	 * Gets the best {@link BinaryOp} implementation for the given types
+	 * and arguments, populating its inputs.
+	 *
+	 * @param ops The {@link OpEnvironment} to search for a matching op.
+	 * @param opType The {@link Class} of the operation. If multiple
+	 *          {@link BinaryOp}s share this type (e.g., the type is an
+	 *          interface which multiple {@link BinaryOp}s implement),
+	 *          then the best {@link BinaryOp} implementation to use will
+	 *          be selected automatically from the type and arguments.
+	 * @param out The typed output.
+	 * @param in1 The first typed input.
+	 * @param in2 The second typed input.
+	 * @param otherArgs The operation's arguments, excluding the typed inputs and
+	 *          output values.
+	 * @return A {@link BinaryOp} with populated inputs, ready to use.
+	 */
+	public static <I1, I2, O, OP extends BinaryOp<I1, I2, O>> OP opOI(
+		final OpEnvironment ops, final Class<? extends Op> opType,
+		final Nil<OP> specialType, final O out, final I1 in1, final I2 in2,
+		final Object... otherArgs)
+	{
+		final Object in1Arg = in1 == null ? Nil.of(in1Type(specialType)) : in1;
+		final Object in2Arg = in2 == null ? Nil.of(in2Type(specialType)) : in2;
+		final Object[] args = SpecialOp.args(specialType, otherArgs, out, in1Arg,
+			in2Arg);
+		return SpecialOp.op(ops, opType, specialType, args);
+	}
+
+	static Type in1Type(final Nil<?> nil) {
+		return SpecialOp.typeParam(nil.getType(), BinaryInput.class, 0);
+	}
+
+	static Type in2Type(final Nil<?> nil) {
+		return SpecialOp.typeParam(nil.getType(), BinaryInput.class, 1);
 	}
 
 }

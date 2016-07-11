@@ -30,9 +30,13 @@
 
 package net.imagej.ops.special;
 
+import net.imagej.ops.Op;
+import net.imagej.ops.OpEnvironment;
 import net.imagej.ops.special.computer.NullaryComputerOp;
 import net.imagej.ops.special.function.NullaryFunctionOp;
 import net.imagej.ops.special.hybrid.NullaryHybridCF;
+
+import org.scijava.type.Nil;
 
 /**
  * A <em>nullary</em> operation computes a result in a vacuum, without any input
@@ -83,6 +87,52 @@ public interface NullaryOp<O> extends SpecialOp, Output<O> {
 		// Individual implementations can override this assumption if they
 		// have state (such as buffers) that cannot be shared across threads.
 		return this;
+	}
+
+	// -- Utility methods --
+
+	/**
+	 * Gets the best {@link UnaryOp} implementation for the given types
+	 * and arguments, populating its inputs.
+	 *
+	 * @param ops The {@link OpEnvironment} to search for a matching op.
+	 * @param opType The {@link Class} of the operation. If multiple
+	 *          {@link NullaryOp}s share this type (e.g., the type is an
+	 *          interface which multiple {@link NullaryOp}s implement),
+	 *          then the best {@link NullaryOp} implementation to use will
+	 *          be selected automatically from the type and arguments.
+	 * @param otherArgs The operation's arguments, excluding the typed output
+	 *          value.
+	 * @return A {@link NullaryOp} with populated inputs, ready to use.
+	 */
+	static <O, OP extends NullaryOp<O>> OP op(
+		final OpEnvironment ops, final Class<? extends Op> opType,
+		final Nil<OP> specialType, final Object... otherArgs)
+	{
+		return opO(ops, opType, specialType, null, otherArgs);
+	}
+
+	/**
+	 * Gets the best {@link NullaryOp} implementation for the given types
+	 * and arguments, populating its inputs.
+	 *
+	 * @param ops The {@link OpEnvironment} to search for a matching op.
+	 * @param opType The {@link Class} of the operation. If multiple
+	 *          {@link NullaryOp}s share this type (e.g., the type is an
+	 *          interface which multiple {@link NullaryOp}s implement),
+	 *          then the best {@link NullaryOp} implementation to use will
+	 *          be selected automatically from the type and arguments.
+	 * @param out The typed output.
+	 * @param otherArgs The operation's arguments, excluding the typed output
+	 *          value.
+	 * @return A {@link NullaryOp} with populated inputs, ready to use.
+	 */
+	static <O, OP extends NullaryOp<O>> OP opO(final OpEnvironment ops,
+		final Class<? extends Op> opType, final Nil<OP> specialType, final O out,
+		final Object... otherArgs)
+	{
+		final Object[] args = SpecialOp.args(specialType, otherArgs, out);
+		return SpecialOp.op(ops, opType, specialType, args);
 	}
 
 }

@@ -30,12 +30,18 @@
 
 package net.imagej.ops.special;
 
+import java.lang.reflect.Type;
+
+import net.imagej.ops.Op;
+import net.imagej.ops.OpEnvironment;
 import net.imagej.ops.special.computer.UnaryComputerOp;
 import net.imagej.ops.special.function.UnaryFunctionOp;
 import net.imagej.ops.special.hybrid.UnaryHybridCF;
 import net.imagej.ops.special.hybrid.UnaryHybridCFI;
 import net.imagej.ops.special.hybrid.UnaryHybridCI;
 import net.imagej.ops.special.inplace.UnaryInplaceOp;
+
+import org.scijava.type.Nil;
 
 /**
  * A <em>unary</em> operation computes a result from a given input. The contents
@@ -94,6 +100,81 @@ public interface UnaryOp<I, O> extends NullaryOp<O>, UnaryInput<I> {
 		// Individual implementations can override this assumption if they
 		// have state (such as buffers) that cannot be shared across threads.
 		return this;
+	}
+
+	// -- Utility methods --
+
+	/**
+	 * Gets the best {@link UnaryOp} implementation for the given types
+	 * and arguments, populating its inputs.
+	 *
+	 * @param ops The {@link OpEnvironment} to search for a matching op.
+	 * @param opType The {@link Class} of the operation. If multiple
+	 *          {@link UnaryOp}s share this type (e.g., the type is an
+	 *          interface which multiple {@link UnaryOp}s implement), then
+	 *          the best {@link UnaryOp} implementation to use will be
+	 *          selected automatically from the type and arguments.
+	 * @param otherArgs The operation's arguments, excluding the typed input and
+	 *          output values.
+	 * @return A {@link UnaryOp} with populated inputs, ready to use.
+	 */
+	static <I, O, OP extends UnaryOp<I, O>> OP op(
+		final OpEnvironment ops, final Class<? extends Op> opType,
+		final Nil<OP> specialType, final Object... otherArgs)
+	{
+		return opOI(ops, opType, specialType, null, null, otherArgs);
+	}
+
+	/**
+	 * Gets the best {@link UnaryOp} implementation for the given types
+	 * and arguments, populating its inputs.
+	 *
+	 * @param ops The {@link OpEnvironment} to search for a matching op.
+	 * @param opType The {@link Class} of the operation. If multiple
+	 *          {@link UnaryOp}s share this type (e.g., the type is an
+	 *          interface which multiple {@link UnaryOp}s implement), then
+	 *          the best {@link UnaryOp} implementation to use will be
+	 *          selected automatically from the type and arguments.
+	 * @param in The typed input.
+	 * @param otherArgs The operation's arguments, excluding the typed input and
+	 *          output values.
+	 * @return A {@link UnaryOp} with populated inputs, ready to use.
+	 */
+	static <I, O, OP extends UnaryOp<I, O>> OP opI(
+		final OpEnvironment ops, final Class<? extends Op> opType,
+		final Nil<OP> specialType, final I in, final Object... otherArgs)
+	{
+		return opOI(ops, opType, specialType, null, in, otherArgs);
+	}
+
+	/**
+	 * Gets the best {@link UnaryOp} implementation for the given types
+	 * and arguments, populating its inputs.
+	 *
+	 * @param ops The {@link OpEnvironment} to search for a matching op.
+	 * @param opType The {@link Class} of the operation. If multiple
+	 *          {@link UnaryOp}s share this type (e.g., the type is an
+	 *          interface which multiple {@link UnaryOp}s implement), then
+	 *          the best {@link UnaryOp} implementation to use will be
+	 *          selected automatically from the type and arguments.
+	 * @param out The typed output.
+	 * @param in The typed input.
+	 * @param otherArgs The operation's arguments, excluding the typed input and
+	 *          output values.
+	 * @return A {@link UnaryOp} with populated inputs, ready to use.
+	 */
+	static <I, O, OP extends UnaryOp<I, O>> OP opOI(
+		final OpEnvironment ops, final Class<? extends Op> opType,
+		final Nil<OP> specialType, final O out, final I in,
+		final Object... otherArgs)
+	{
+		final Object inArg = in == null ? Nil.of(inType(specialType)) : in;
+		final Object[] args = SpecialOp.args(specialType, otherArgs, out, inArg);
+		return SpecialOp.op(ops, opType, specialType, args);
+	}
+
+	static Type inType(final Nil<?> nil) {
+		return SpecialOp.typeParam(nil.getType(), UnaryInput.class, 0);
 	}
 
 }
