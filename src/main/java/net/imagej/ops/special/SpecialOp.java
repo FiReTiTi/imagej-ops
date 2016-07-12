@@ -342,21 +342,9 @@ public interface SpecialOp extends Op, Initializable, Threadable {
 	}
 
 	/**
-	 * Gets the best {@link SpecialOp} implementation for the given types and
-	 * arguments, populating its inputs.
-	 *
-	 * @param ops The {@link OpEnvironment} to search for a matching op.
-	 * @param opType The {@link Class} of the operation. If multiple
-	 *          {@link SpecialOp}s share this type (e.g., the type is an interface
-	 *          which multiple {@link SpecialOp}s implement), then the best
-	 *          {@link SpecialOp} implementation to use will be selected
-	 *          automatically from the type and arguments.
-	 * @param specialType The {@link SpecialOp} type to which matches should be
-	 *          restricted.
-	 * @param outType the type of the op's primary output, or null for any type.
-	 * @param args The operation's arguments.
-	 * @return A typed {@link SpecialOp} with populated inputs, ready to use.
+	 * @deprecated Use {@link #op(OpEnvironment, Class, Nil, Object...)} instead.
 	 */
+	@Deprecated
 	static <S extends SpecialOp, O> S op(final OpEnvironment ops,
 		final Class<? extends Op> opType, final Class<S> specialType,
 		final Class<O> outType, final Object... args)
