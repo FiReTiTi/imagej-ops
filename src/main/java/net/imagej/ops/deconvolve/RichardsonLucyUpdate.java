@@ -42,15 +42,11 @@ import org.scijava.Priority;
 import org.scijava.plugin.Plugin;
 
 /**
- * Implements update step for Richardson-Lucy algortihm (@link
+ * Implements update step for Richardson-Lucy algorithm (@link
  * RandomAccessibleInterval) (Lucy, L. B. (1974).
  * "An iterative technique for the rectification of observed distributions".)
  * 
  * @author Brian Northan
- * @param <I>
- * @param <O>
- * @param <K>
- * @param <C>
  */
 @Plugin(type = Ops.Deconvolve.RichardsonLucyUpdate.class,
 	priority = Priority.HIGH_PRIORITY)
